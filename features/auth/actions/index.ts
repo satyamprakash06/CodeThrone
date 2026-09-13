@@ -3,23 +3,51 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  DEFAULT_AUTH_CALLBACK,
+  SIGN_IN_PATH,
+  getSafeCallbackPath,
+} from "../utils";
 
 export async function signInWithGithub(formData: FormData) {
   const callback = formData.get("callbackUrl");
 
-  // const redirectTo = getSafeCallbackPath(
-  //   typeof callback === "string" ? callback : null
-  // );
+  const redirectTo = getSafeCallbackPath(
+    typeof callback === "string" ? callback : null,
+  );
 
   const result = await auth.api.signInSocial({
     body: {
       provider: "github",
-      callbackURL: "/dashboard",
+      callbackURL: redirectTo,
     },
     headers: await headers(),
   });
 
   if (result.url) {
     redirect(result.url);
+  }
+}
+
+export async function getServerSession() {
+  return auth.api.getSession({
+    headers: await headers(),
+  });
+}
+
+export async function reqireAuth(redirectTo = SIGN_IN_PATH) {
+  const session = await getServerSession();
+
+  if (!session) {
+    redirect(redirectTo);
+  }
+  return session;
+}
+
+export async function reqireUnauth(redirectTo = DEFAULT_AUTH_CALLBACK) {
+  const session = await getServerSession();
+
+  if (session) {
+    redirect(redirectTo);
   }
 }
