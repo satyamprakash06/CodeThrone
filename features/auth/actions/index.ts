@@ -35,7 +35,7 @@ export async function getServerSession() {
   });
 }
 
-export async function reqireAuth(redirectTo = SIGN_IN_PATH) {
+export async function requireAuth(redirectTo = SIGN_IN_PATH) {
   const session = await getServerSession();
 
   if (!session) {

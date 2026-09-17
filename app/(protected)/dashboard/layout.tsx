@@ -1,4 +1,4 @@
-import { reqireAuth } from "@/features/auth/actions";
+import { requireAuth } from "@/features/auth/actions";
 import { DashboardShell } from "@/features/dashboard/componenets/dashboard-shell";
 
 export default async function DashboardLayout({
@@ -6,7 +6,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await reqireAuth();
+  const session = await requireAuth();
 
   return (
     <DashboardShell user={session.user} plan="Pro">
